@@ -1,0 +1,93 @@
+#define IN1_PAIR1   4   // الأردوينو Pin 4 إلى L293D Pin 2
+#define IN2_PAIR1   5   // الأردوينو Pin 5 إلى L293D Pin 7
+
+#define IN3_PAIR2   6   // الأردوينو Pin 6 إلى L293D Pin 10
+#define IN4_PAIR2   7   // الأردوينو Pin 7 إلى L293D Pin 15
+
+
+
+void setup() {
+
+  pinMode(IN1_PAIR1, OUTPUT);
+  pinMode(IN2_PAIR1, OUTPUT);
+  pinMode(IN3_PAIR2, OUTPUT);
+  pinMode(IN4_PAIR2, OUTPUT);
+
+ 
+  Serial.begin(9600);
+  Serial.println("Arduino Motor Control Ready!");
+}
+
+void loop() {
+  Serial.println("Moving All Motors Forward for 30 seconds...");
+  moveAllMotors(true); 
+  delay(30000); 
+  Serial.println("Stopping motors...");
+  stopAllMotors();
+  delay(2000);
+  Serial.println("Moving All Motors Backward for 1 minute...");
+  moveAllMotors(false); 
+  delay(60000); 
+  stopAllMotors();
+  delay(2000);
+
+  Serial.println("Alternating Spin (Upper vs Lower Motors) for 1 minute...");
+  unsigned long startTime = millis(); 
+  while (millis() - startTime < 60000) { 
+    Serial.println("Spin Right (Upper Forward, Lower Backward)...");
+    spinRight();
+    delay(3000); 
+    
+    Serial.println("Spin Left (Upper Backward, Lower Forward)...");
+    spinLeft();
+    delay(3000); 
+  }
+
+  Serial.println("Stopping motors at end of cycle...");
+  stopAllMotors();
+  delay(5000); 
+}
+
+void moveAllMotors(bool forward) {
+  if (forward) {
+    
+    digitalWrite(IN1_PAIR1, HIGH);
+    digitalWrite(IN2_PAIR1, LOW);
+    
+    digitalWrite(IN3_PAIR2, HIGH);
+    digitalWrite(IN4_PAIR2, LOW);
+  } else {
+   
+    digitalWrite(IN1_PAIR1, LOW);
+    digitalWrite(IN2_PAIR1, HIGH);
+  
+    digitalWrite(IN3_PAIR2, LOW);
+    digitalWrite(IN4_PAIR2, HIGH);
+  }
+}
+
+
+void stopAllMotors() {
+  digitalWrite(IN1_PAIR1, LOW);
+  digitalWrite(IN2_PAIR1, LOW);
+  digitalWrite(IN3_PAIR2, LOW);
+  digitalWrite(IN4_PAIR2, LOW);
+}
+
+void spinRight() {
+ 
+  digitalWrite(IN1_PAIR1, HIGH);
+  digitalWrite(IN2_PAIR1, LOW);
+ 
+  digitalWrite(IN3_PAIR2, LOW);
+  digitalWrite(IN4_PAIR2, HIGH);
+}
+
+void spinLeft() {
+
+  digitalWrite(IN1_PAIR1, LOW);
+  digitalWrite(IN2_PAIR1, HIGH);
+ 
+  digitalWrite(IN3_PAIR2, HIGH);
+  digitalWrite(IN4_PAIR2, LOW);
+}
